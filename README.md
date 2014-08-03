@@ -3,7 +3,7 @@ Purpose
 
 This repo contains a minimal ClojureScript project which shows how to mix:
 
-* emerick.cljs.test     (a unittest framework)
+* [cemerick/clojurescript.test]  (a unittest framework)
 * with the `:optimizations :none` setting in cljsbuild (see project.clj) and
 * use of `lein cljsbuild auto <testname>`
 
@@ -109,7 +109,7 @@ The technique used here will work just fine.  Here is a [gist] to get you going.
 [gist]:http://XXXXXXX.XXXX/
 [figwheel]:https://github.com/bhauman/lein-figwheel
 [this problem]:https://github.com/ariya/phantomjs/issues/10845#issuecomment-14994358
-
+[cemerick/clojurescript.test]:https://github.com/cemerick/clojurescript.test
 
 
 Do you have a runner for Node?
