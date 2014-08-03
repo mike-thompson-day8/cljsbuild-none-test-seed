@@ -62,7 +62,7 @@ Start auto compilation (if you change a file and save it, a recompile will happe
 ```
 lein cljsbuild auto test
 ```
-Or, using the alias (see the end of project.clj):
+Or, instead of the command above, you could use the alias (see the end of project.clj):
 ```
 lein auto-test
 ```
@@ -71,7 +71,7 @@ You might initially see a bunch of dependencies being downloaded, and that could
 
 Then, load `test.html` into a browser. Bingo! You should see the output from emerick.cljs.test.
 
-Or, at the command line (in the root directory) you can try this:
+Or, if the browser is not your thing, at the command line (in the root directory) you can try this:
 ```
 phantomjs test/bin/runner-none.js  compiled/test/goog/ compiled/test.js
 ```
@@ -80,7 +80,7 @@ phantomjs test/bin/runner-none.js  compiled/test/goog/ compiled/test.js
 Now Experiment
 ----------------------
 
-Pull out your favorite editor, and make a change to a test (a cljs file in `test` directory). Save it. And watch as `lein cljsbuild auto test` performs a deliciously fast recompile. Then refresh `test.html` to see if you tests still pass.
+Pull out your favorite editor, and make a change to a test (a cljs file in `test` directory). Save it. And watch as `lein cljsbuild auto test` performs a deliciously fast recompile. Then refresh `test.html` to see if your tests still pass.
 
 Introduce an error into your tests.  Or perhaps a rogue  `throw`.  See how it shows up when you refresh `test.html`.  Set breakpoints in chrome dev tools. Etc.
 

@@ -39,7 +39,7 @@
 
     <script>
         // --------------------------------------------------------------------
-        // We're assuming here that "test.js" (in <script> immedaitely above)
+        // We're assuming here that "test.js" (in <script> immediately above)
         // was created using  ":optimizations :none"  (see project.clj).
         //
         // If so, test.js won't contain much. Just a series of calls to
@@ -48,7 +48,7 @@
         // Each call looks like this:
         //     goog.addDependency("path/to/a/file.js",
         //                        [namespace-defined-in-the-js],
-        //                        [is-dependent-on-these-namepaces])
+        //                        [is-dependent-on-these-namespaces])
         //
         // Collectively, the contents of test.js creates a dependency graph,
         // but doesn't actually import any javascript.
@@ -58,7 +58,7 @@
         //     goog.require('the-namespace-I-want').
         //
         // Each call to goog.require() will:
-        //    - add a <script> for a js page   (ie. load the associated js)
+        //    - add a <script> for a js page   (i.e. load the associated js)
         //    - plus also one <script> for each dependency.
         //    - these scripts will be added in the right (dependency) order.
         //    - but only if that <script> hasn't previously been added.
@@ -67,7 +67,7 @@
         // To be absolutely clear: nothing happens till we call goog.require()
         //
         // With a normal application, we'd typically bootstrap via a single:
-        //     goog.require('my.core.namspace')
+        //     goog.require('my.core.namespace')
         // which would pull in our top level entry point.
         // This would, in turn, trigger a cascade of other dependency
         // requires, and bingo, everything we need is pulled in.
@@ -75,11 +75,11 @@
         // But here, in unittest land, we have a problem: there is no single
         // "root" namespace to goog.require(). Instead, we have one namespace
         // for each unittest cljs file in our test folder.  No root. Flat.
-        // And the list of namepaces changes over time as we add and remove
+        // And the list of namespaces changes over time as we add and remove
         // unitest cljs files.  Uggh. Disaster.
         //
         // But we do have one ace up our sleeve. All the cljs files containing
-        // our unittests will have been scopped up by cljsbuild and put into
+        // our unittests will have been scooped up by cljsbuild and put into
         // the dependency graph in test.js
         //
         // So we'll need to exploit that (see loop below).
