@@ -69,12 +69,19 @@ lein auto-test
 
 You might initially see a bunch of dependencies being downloaded, and that could take a minute the first time. Wait till you see `Compiling ClojureScript.`
 
-Then, load `test.html` into a browser. Bingo! You should see the output from emerick.cljs.test.
+Then, load `test.html` into a browser. Bingo! You should see the output from [cemerick/clojurescript.test].
 
-Or, if the browser is not your thing, at the command line (in the root directory) you can try this:
+Phantomjs
+--------------------
+
+If the browser is not your thing, at the command line (in the root directory) you can try this:
 ```
 phantomjs test/bin/runner-none.js  compiled/test/goog/ compiled/test.js
 ```
+
+Usage is [here].
+
+BTW, if you find that phantomjs doesn't quit AND you have an NVidia card, it might be [this problem]. It bit me too. How bizarre.
 
 
 Now Experiment
@@ -84,11 +91,6 @@ Pull out your favorite editor, and make a change to a test (a cljs file in `test
 
 Introduce an error into your tests.  Or perhaps a rogue  `throw`.  See how it shows up when you refresh `test.html`.  Set breakpoints in chrome dev tools. Etc.
 
-
-Phantomjs Doesn't Shutdown?
-----------------------
-
-If you have an NVidia card, it might be [this problem] which also bit me.  How bizarre.
 
 
 
@@ -106,12 +108,6 @@ The technique used here will work just fine.  Here is a [gist] to get you going.
 
 
 
-[gist]:http://XXXXXXX.XXXX/
-[figwheel]:https://github.com/bhauman/lein-figwheel
-[this problem]:https://github.com/ariya/phantomjs/issues/10845#issuecomment-14994358
-[cemerick/clojurescript.test]:https://github.com/cemerick/clojurescript.test
-
-
 Do you have a runner for Node?
 ----------------------
 
@@ -126,5 +122,12 @@ Copyright and license
 Copyright © 2014 Mike Thompson
 
 Licensed under the EPL (see the file epl.html).
+
+
+[gist]:http://XXXXXXX.XXXX/
+[figwheel]:https://github.com/bhauman/lein-figwheel
+[this problem]:https://github.com/ariya/phantomjs/issues/10845#issuecomment-14994358
+[cemerick/clojurescript.test]:https://github.com/cemerick/clojurescript.test
+[here]:https://github.com/mike-thompson-day8/cljsbuild-none-test-seed/blob/master/test/bin/runner-none.js
 
 
