@@ -3,7 +3,7 @@ Purpose
 
 This repo contains a minimal ClojureScript project which shows how to mix:
 
-* [cemerick/clojurescript.test]  (a unittest framework)
+* [cemerick/clojurescript.test]  - a unittest framework
 * with the `:optimizations :none` setting in cljsbuild (see project.clj) and
 * use of `lein cljsbuild auto <testname>`
 
