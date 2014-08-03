@@ -1,0 +1,162 @@
+<html lang="en">
+  <head>
+    <title>Unit Tests</title>
+
+    <!-- Use a monspace font and a dark theme -->
+    <!-- Colour Palet from http://clrs.cc/    -->
+    <style>
+        body {
+            font-family: Courier, "Courier New", monospace;
+            font-size: 11;
+            background-color: #111;
+            color: #eee;
+            margin: 0.25in 0.25in 0.25in 0.25in;
+        }
+        h2 {
+            font-size: 24;
+        }
+        .red {
+            color: #FF4136;
+        }
+        .green {
+            color: #2ECC40;
+        }
+        .orange {
+            color: #FF851B;
+        }
+        .blue {
+            color: #0074D9;
+        }
+    </style>
+  </head>
+
+  <body>
+    <h2>Unit Tests</h2>
+    <div id="output-goes-here"></div>
+
+    <script src="compiled/test/goog/base.js" type="text/javascript"></script>
+    <script src="compiled/test.js"           type="text/javascript"></script>
+
+    <script>
+        // --------------------------------------------------------------------
+        // We're assuming here that "test.js" (in <script> immedaitely above)
+        // was created using  ":optimizations :none"  (see project.clj).
+        //
+        // If so, test.js won't contain much. Just a series of calls to
+        //     goog.addDependency()
+        //
+        // Each call looks like this:
+        //     goog.addDependency("path/to/a/file.js",
+        //                        [namespace-defined-in-the-js],
+        //                        [is-dependent-on-these-namepaces])
+        //
+        // Collectively, the contents of test.js creates a dependency graph,
+        // but doesn't actually import any javascript.
+        //
+        // To actually trigger the loading of any js, we must use another
+        // part of the goog API:
+        //     goog.require('the-namespace-I-want').
+        //
+        // Each call to goog.require() will:
+        //    - add a <script> for a js page   (ie. load the associated js)
+        //    - plus also one <script> for each dependency.
+        //    - these scripts will be added in the right (dependency) order.
+        //    - but only if that <script> hasn't previously been added.
+        //  So goog looks after all that for us.
+        //
+        // To be absolutely clear: nothing happens till we call goog.require()
+        //
+        // With a normal application, we'd typically bootstrap via a single:
+        //     goog.require('my.core.namspace')
+        // which would pull in our top level entry point.
+        // This would, in turn, trigger a cascade of other dependency
+        // requires, and bingo, everything we need is pulled in.
+        //
+        // But here, in unittest land, we have a problem: there is no single
+        // "root" namespace to goog.require(). Instead, we have one namespace
+        // for each unittest cljs file in our test folder.  No root. Flat.
+        // And the list of namepaces changes over time as we add and remove
+        // unitest cljs files.  Uggh. Disaster.
+        //
+        // But we do have one ace up our sleeve. All the cljs files containing
+        // our unittests will have been scopped up by cljsbuild and put into
+        // the dependency graph in test.js
+        //
+        // So we'll need to exploit that (see loop below).
+        //
+        // Everything said above only applies when using  :optimisation :none.
+        // When using the other :optimisation settings, all the code is
+        // arranged into one great big test.js and there's no need
+        // for any dependency stuff. Once we import test.js, we get everything.
+        //
+        // But building a big test.js is slow. And we want our unittest
+        // workflow to be fast and iterative.
+        //
+        // --------------------------------------------------------------------
+        //
+        // So the loop below is a sledge hammer. And a bit of a glorious hack.
+        // It "goog.requires" every namespace previously registered via calls
+        // to goog.addDependency()
+        //
+        // Every unittest namespace will be mentioned somewhere in test.js,
+        // so our sledgehammer brings in all the code. Which is exactly
+        // what we want. (All the unittests will register themselves on import)
+        //
+        // Its a hack because we're reaching into 'goog' and exploiting part
+        // of its implementation. And, of course, depending on implementation
+        // details is not wise. It might change. But I'll take that risk to
+        // get the benefits now.
+        //
+        for(var namespace in goog.dependencies_.nameToPath)
+            goog.require(namespace);
+
+
+        // --------------------------------------------------------------------
+        // Output
+        var outputDiv = document.getElementById("output-goes-here")
+
+        function testPrintLn(line) {
+            line = line.replace(/\n/g, "");
+            if (line == "")
+               return;
+
+            // First, to the console
+            console.log(line);
+
+            // Second, into the HTML
+            var span = document.createElement("span");
+            outputDiv.appendChild(span);
+
+            // look for colour markers
+            if (-1 != line.indexOf('ERROR')) {
+                span.className = "orange"
+            }
+            if (-1 != line.indexOf('FAIL')) {
+                span.className = "red"
+            }
+            if (-1 != line.indexOf('Testing complete')) {
+                span.className = "green"
+            }
+
+            // replace leading blanks with &nbsp; so text lines up
+            var numLeadingBlanks = line.match(/^\s*/)[0].length;
+            var leadingNBSP = Array(numLeadingBlanks).join("&nbsp;")
+
+            span.innerHTML = leadingNBSP + line + "<br>";
+        }
+
+        // --------------------------------------------------------------------
+        // Run Tests
+        //
+        function run_tests() {
+            cemerick.cljs.test.set_print_fn_BANG_(testPrintLn);
+            var results = cemerick.cljs.test.run_all_tests();
+        }
+
+
+        // Don't run any tests till this page is fully loaded.
+        // Remember there'll be lots of async <script> added by the loop above.
+        window.addEventListener('load', run_tests);
+    </script>
+  </body>
+</html>
