@@ -13,17 +13,26 @@ This combination results a fast unittest workflow. Compile times are short. Iter
 The Problem It Solves
 ----------------------
 
-Previously, I've had to use `:optimizations :whitespace`  or `:simple` when transpiling (cljsbuild-ing)
-unittests, which I've found uncomfortable because it takes too long.
-Iterative development was slow. Flow gets broken.  No, not good enough.  This repo is a solution.
+At the time of writing, [cemerick/clojurescript.test]  doesn't work with `:optimizations :none`.
+I tried, it broke, I cursed, I looked into it more, and realised that it could never
+work as things stood.
+
+I retreated back to using `:optimizations :whitespace` which did work, thankfully, but
+I found my workflow uncomfortable.
+Building a big test.js each time meant my compiles took too long, and this
+made iterative development
+cycles feel slow and clunky. Flow was broken.  No, not good enough!!  I needed the near-instant compile
+time you get by combining `:optimizations :none` and `lein cljsbuild auto <testname>`
+
+So I figured out how to make it happen. And this repo shows how.
 
 I've also created a `test.html` - a browser-based unittest runner which allows me to
-debug unittests using chrome dev-tools.  Also, I wanted the option of not using
-the command line, and instead just refreshing a browser page to see my unittest results.
+debug unittests using chrome dev-tools.  You can forget the command line
+and just refresh a browser page to see your unittest results.
 
 Having said that, if the command line is your thing, or you need to automate
 deployments etc, this repo also shows you how to mix `:optimizations :none`
-with phantomjs.
+with `phantomjs`.
 
 
 
