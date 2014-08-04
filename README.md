@@ -133,7 +133,7 @@ Copyright © 2014 Mike Thompson
 Licensed under the EPL (see the file epl.html).
 
 
-[gist]:http://XXXXXXX.XXXX/
+[gist]:https://gist.github.com/mike-thompson-day8/8a87349cf69697bfcd64
 [figwheel]:https://github.com/bhauman/lein-figwheel
 [this problem]:https://github.com/ariya/phantomjs/issues/10845#issuecomment-14994358
 [cemerick/clojurescript.test]:https://github.com/cemerick/clojurescript.test

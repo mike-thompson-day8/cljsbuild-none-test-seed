@@ -14,6 +14,7 @@
                         {:id "test"
                          :source-paths   ["src" "test"]
                          :compiler       {:output-to     "compiled/test.js"
+                                          :source-map    "compiled/test.js.map"
                                           :output-dir    "compiled/test"
                                           :optimizations :none
                                           :pretty-print  true}}
