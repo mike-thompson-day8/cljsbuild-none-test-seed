@@ -83,12 +83,33 @@ Then, load `test.html` into a browser. Bingo! You should see the output from [ce
 Phantomjs
 --------------------
 
-If the browser is not your thing, at the command line (in the root directory) you can try this:
+If the browser is not your thing, or you need to automate deployments etc, you can use phantomjs on the command line.
+
+
+Imagine for a minute that your project.clj contained this cljsbuild spec involving `:optimizations :none`:
 ```
-phantomjs test/bin/runner-none.js  compiled/test/goog/ compiled/test.js
+:cljsbuild { :builds [
+                        {:id "test"
+                         :source-paths   ["src" "test"]
+                         :compiler       {:output-to     "compiled/test.js"      ;; <----  notice :output-to
+                                          :source-map    "compiled/test.js.map"
+                                          :output-dir    "compiled/test"         ;; <----  notice :output-dir
+                                          :optimizations :none
+                                          :pretty-print  true}}
 ```
 
-Usage is [here].
+
+You would use phantomjs like this:
+```
+phantomjs test/bin/runner-none.js  compiled/test  compiled/test.js
+```
+
+Notes:
+* the first parameter is a custom `runner script` which understand `:optimizations :none`, and is provided in this repo [here]
+* the 2nd and 3rd parameters are the cljsbuild values for `:output-dir` and `:output-to` respectively.
+
+As an exercise, go to root folder of this repo and try the command line given above.
+
 
 BTW, if you find that phantomjs doesn't quit AND you have an NVidia card, it might be [this problem]. It bit me too. How bizarre.
 

@@ -9,15 +9,15 @@ var thisName = system.args[0].split('/').slice(-1);
 
 var usage = [
    "",
-   "Usage: phantomjs " + thisName + " path/to/goog  path/to/my/test.js  [tweaks]",
+   "Usage: phantomjs " + thisName + " output-dir  output-to  [tweaks]",
    "",
    "Where:",
-   "    - path/to/goog is the directory containing base.js & deps.js",
-   "    - test.js is the js file produced by cljsbuild, using :optimizations :none",
-   "    - [tweaks] is zero or more of:",
+   "    - \"output-dir\" and \"output-to\" should match the paths you supplied ",
+   "      to cljsbuild in the project.clj. (right next to \":optimizations :none\").",
+   "    - [tweaks] is zero or more of either:",
    "        (1) an extra javascript file - e.g.  path/to/my-shim.js ",
-   "        (2) javascript code fragments - window.something=flag",
-   "      These tweaks will be applied to the test page prior to test.js being loaded."
+   "        (2) arbitrary javascript code fragments. E.g. window.something=flag",
+   "      These tweaks will be applied to the test page prior to load of test code."
    ].join("\n");
 
 
@@ -44,13 +44,20 @@ if (system.args.length < 3)  {
 }
 
 // google base dir
-var googBasedir = system.args[1];
+var output_to = system.args[1];
+if (output_to.slice(-1) != "/")    // we want a trailing '/'
+    output_to = output_to + "/";
+if (!fs.isDirectory(output_to)) {
+    console.log(red('\nError: output_to directory doesn\'t exist: '  + output_to))
+    phantom.exit(1)
+}
+
+
+var googBasedir = output_to + "goog/"
 if (!fs.isDirectory(googBasedir)) {
     console.log(red('\nError: goog directory doesn\'t exist: '  + googBasedir))
     phantom.exit(1)
 }
-if (googBasedir.slice(-1) != "/")    // we want a trailing '/'
-    googBasedir = googBasedir + "/";
 
 var BASE_JS = googBasedir + "base.js";
 if (!fs.exists(BASE_JS)) {
@@ -65,7 +72,7 @@ if (!fs.exists(DEPS_JS)) {
 }
 
 // test file
-var testFile = system.args[2];
+var testFile = system.args[2];    // output-to parameter. Eg  test.js
 if (!fs.exists(testFile)) {
     console.log(red('\nError: test file doesn\'t exist: ' + testFile));
     phantom.exit(1)
