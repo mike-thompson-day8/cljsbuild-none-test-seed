@@ -31,7 +31,7 @@
                                           :output-dir    "compiled/prod"
                                           :optimizations :advanced}}]
 
-               :test-commands {"unit-tests" ["phantomjs" "test/bin/runner-none.js"  "compiled/test/goog/" "compiled/test.js"]}}
+               :test-commands {"unit-tests" ["phantomjs" "test/bin/runner-none.js"  "compiled/test" "compiled/test.js"]}}
 
   :source-paths ["src" "test"]
   :test-paths ["spec"]
