@@ -39,7 +39,7 @@ Why is :none different?
 
 When the setting for `:optimization` is one of `:simple` `:whitespace` or `:advanced`, cljsbuild will put *all* the javascript into a single, large ".js" file (nominated via `:output-to`).   This can take a while at compile time, but this one-file outcome certainly makes it easy at run time.
 
-You just load this one file into the browser (think <script>) or nodejs (think command line), and presto, everything is there.
+You just load this one file into the browser (think \<script\>) or nodejs (think command line), and presto, everything is there.
 
 This repo shows how to handle the more difficult run-time situation created by `:optimizations :none` because you don't end up with one large javascript file, but rather **many small javascript files and some dependency information about them**.
 
