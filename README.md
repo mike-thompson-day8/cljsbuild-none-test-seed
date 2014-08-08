@@ -105,7 +105,7 @@ phantomjs test/bin/runner-none.js  compiled/test  compiled/test.js
 ```
 
 Notes:
-* the first parameter is a custom `runner script` which understand `:optimizations :none`, and is provided in this repo [here]
+* the first parameter is a custom `runner script` which understands `:optimizations :none`, and is provided [in this repo here]
 * the 2nd and 3rd parameters are the cljsbuild values for `:output-dir` and `:output-to` respectively.
 
 As an exercise, go to root folder of this repo and try the command line given above.
@@ -158,6 +158,6 @@ Licensed under the EPL (see the file epl.html).
 [figwheel]:https://github.com/bhauman/lein-figwheel
 [this problem]:https://github.com/ariya/phantomjs/issues/10845#issuecomment-14994358
 [cemerick/clojurescript.test]:https://github.com/cemerick/clojurescript.test
-[here]:https://github.com/mike-thompson-day8/cljsbuild-none-test-seed/blob/master/test/bin/runner-none.js
+[in this repo here]:https://github.com/mike-thompson-day8/cljsbuild-none-test-seed/blob/master/test/bin/runner-none.js
 
 
