@@ -44,16 +44,16 @@ if (system.args.length < 3)  {
 }
 
 // google base dir
-var output_to = system.args[1];
-if (output_to.slice(-1) != "/")    // we want a trailing '/'
-    output_to = output_to + "/";
-if (!fs.isDirectory(output_to)) {
-    console.log(red('\nError: output_to directory doesn\'t exist: '  + output_to))
+var output_dir = system.args[1];
+if (output_dir.slice(-1) != "/")    // we want a trailing '/'
+    output_dir = output_dir + "/";
+if (!fs.isDirectory(output_dir)) {
+    console.log(red('\nError: output_dir directory doesn\'t exist: '  + output_dir))
     phantom.exit(1)
 }
 
 
-var googBasedir = output_to + "goog/"
+var googBasedir = output_dir + "goog/"
 if (!fs.isDirectory(googBasedir)) {
     console.log(red('\nError: goog directory doesn\'t exist: '  + googBasedir))
     phantom.exit(1)

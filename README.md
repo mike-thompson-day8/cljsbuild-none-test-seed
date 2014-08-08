@@ -14,8 +14,8 @@ The Problem It Solves
 ----------------------
 
 At the time of writing, [cemerick/clojurescript.test]  doesn't work with `:optimizations :none`.
-I tried, it broke, I cursed, I looked into it more, and realised that it could never
-work as things stood.
+I tried, it broke, I cursed, I looked into it more wondering what I had done wrong, and pretty quickly
+realised that it could never work as things stood.
 
 I retreated back to using `:optimizations :whitespace` which did work, thankfully, but
 I found my workflow uncomfortable.
@@ -39,7 +39,7 @@ with `phantomjs`.
 How Does It work?
 ----------------------
 
-There's a pretty simple hack at the center of this which makes it all possible.
+There's a pretty simple hack at the center of this.
 
 First, you should look in `test.html`. Read the explanation in there.
 
@@ -88,14 +88,14 @@ If the browser is not your thing, or you need to automate deployments etc, you c
 
 Imagine for a minute that your project.clj contained this cljsbuild spec involving `:optimizations :none`:
 ```
-:cljsbuild { :builds [
-                        {:id "test"
-                         :source-paths   ["src" "test"]
-                         :compiler       {:output-to     "compiled/test.js"      ;; <----  notice :output-to
-                                          :source-map    "compiled/test.js.map"
-                                          :output-dir    "compiled/test"         ;; <----  notice :output-dir
-                                          :optimizations :none
-                                          :pretty-print  true}}
+:cljsbuild {
+  :builds [{:id           "test"
+            :source-paths ["src" "test"]
+            :compiler     {:output-to     "compiled/test.js"      ;; <--  we use this
+                           :source-map    "compiled/test.js.map"
+                           :output-dir    "compiled/test"         ;; <--  and this
+                           :optimizations :none
+                           :pretty-print  true}}
 ```
 
 
@@ -131,7 +131,7 @@ Now Introduce Figwheel
 If you introduce [figwheel], you won't  even have to go through the arduous process of clicking the refresh button on `test.html`
 
 
-What If I'm Using Speclj?
+What If I'm Using Specljs?
 ----------------------
 
 The technique used here will work just fine.  Here is a [gist] to get you going.
