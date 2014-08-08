@@ -1,7 +1,7 @@
 Purpose
-----------------------
+---------------
 
-This repo contains a minimal ClojureScript project which shows how to mix:
+This repo contains a minimal ClojureScript project showing how to mix:
 
 * [cemerick/clojurescript.test]  - a unittest framework
 * with the `:optimizations :none` setting in cljsbuild (see project.clj) and
@@ -26,34 +26,48 @@ time you get by combining `:optimizations :none` and `lein cljsbuild auto <testn
 
 So I figured out how to make it happen. And this repo shows how.
 
-I've also created a `test.html` - a browser-based unittest runner which allows me to
+I've created a `test.html` - a browser-based unittest runner which allows me to
 debug unittests using chrome dev-tools.  You can forget the command line
 and just refresh a browser page to see your unittest results.
 
-Having said that, if the command line is your thing, or you need to automate
-deployments etc, this repo also shows you how to mix `:optimizations :none`
+If the command line is your thing, this repo also shows you how to mix `:optimizations :none`
 with `phantomjs`.
 
 
+Why is :none different?
+-----------------------
 
-How Does It work?
+When the setting for `:optimization` is one of `:simple` `:whitespace` or `:advanced`, cljsbuild will put *all* the javascript into a single, large ".js" file (nominated via `:output-to`).   This can take a while at compile time, but this one-file outcome certainly makes it easy at run time.
+
+You just load this one file into the browser (think <script>) or nodejs (think command line), and presto, everything is there.
+
+This repo shows how to handle the more difficult run-time situation created by `:optimizations :none` because you don't end up with one large javascript file, but rather **many small javascript files and some dependency information about them**.
+
+Then, at runtime, you have to stitch these files together.
+
+For your typical application, this is not difficult.  You use the Google Closure runtime, `goog`, to `require` a single, known root namespace which, in turn, triggers a cascade of other (dependent) namespaces to be required automatically. One call to `goog.require()` and you are done.
+
+But in the case of unittests, where there's a flat namespace structure (many unknown roots), it is all a bit more of a challenge. Till now.
+
+
+
+So How Does The Solution Work?
 ----------------------
 
-There's a pretty simple hack at the center of this.
+Turns out there's a pretty simple hack at the center of this.
 
-First, you should look in `test.html`. Read the explanation in there.
+First, read the explanation in `test.html`.
 
 Then, look at `test/bin/runner-none.js` to see how the same thing is achieved
-in phantomjs. You'll see it is a bit more complicated, and there's not as much
-explanation in that file, but armed with what you read in `test.html`
+in phantomjs. You'll see it is a bit more complicated, and more sparsely
+documented (never a good combination), but armed with what's in `test.html`
 you'll figure it out.
-
 
 
 Just Tell Me What To Do!
 ----------------------
 
-Clone this repo:
+Okay fine.  First, clone this repo:
 
 ```sh
 git clone https://github.com/mike-thompson-day8/cljsbuild-none-test-seed.git
@@ -78,7 +92,8 @@ lein auto-test
 
 You might initially see a bunch of dependencies being downloaded, and that could take a minute the first time. Wait till you see `Compiling ClojureScript.`
 
-Then, load `test.html` into a browser. Bingo! You should see the output from [cemerick/clojurescript.test].
+Then, load `test.html` into a browser. Bingo! You should see the output from the [cemerick/clojurescript.test] runner.
+
 
 Phantomjs
 --------------------
@@ -99,7 +114,7 @@ Imagine for a minute that your project.clj contained this cljsbuild spec involvi
 ```
 
 
-You would use phantomjs like this:
+You would use phantomjs at the command line like this:
 ```
 phantomjs test/bin/runner-none.js  compiled/test  compiled/test.js
 ```
@@ -120,7 +135,6 @@ Now Experiment
 Pull out your favorite editor, and make a change to a test (a cljs file in `test` directory). Save it. And watch as `lein cljsbuild auto test` performs a deliciously fast recompile. Then refresh `test.html` to see if your tests still pass.
 
 Introduce an error into your tests.  Or perhaps a rogue  `throw`.  See how it shows up when you refresh `test.html`.  Set breakpoints in chrome dev tools. Etc.
-
 
 
 
