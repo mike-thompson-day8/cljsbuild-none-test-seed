@@ -20,6 +20,16 @@
                                           :optimizations :none
                                           :pretty-print  true}}
 
+                        {:id "test-node"
+                         :source-paths   ["src" "test"]
+                         :compiler       {:output-to     "compiled/test-node.js"
+                                          ;;; source maps can't be used
+                                          :target :nodejs
+                                          ;;; this target requires a main to be defined
+                                          :output-dir    "compiled/test-node"
+                                          :optimizations :none
+                                          :pretty-print  true}}
+
                         {:id "dev"
                          :source-paths   ["src"]
                          :compiler       {:output-to     "compiled/dev.js"
@@ -32,7 +42,8 @@
                                           :output-dir    "compiled/prod"
                                           :optimizations :advanced}}]
 
-               :test-commands {"unit-tests" ["phantomjs" "test/bin/runner-none.js"  "compiled/test" "compiled/test.js"]}}
+               :test-commands {"unit-tests" ["phantomjs" "test/bin/runner-none.js"  "compiled/test" "compiled/test.js"]
+                               "node-tests" ["node" "test/bin/runner-node.js"  "compiled/test-node" "compiled/test-node.js"]}}
 
   :source-paths ["src" "test"]
   :test-paths ["spec"]

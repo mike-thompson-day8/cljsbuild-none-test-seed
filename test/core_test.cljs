@@ -7,3 +7,6 @@
 (deftest test-equals
   (is (= (core/return5) 5)))
 
+;;; needed to use the :target :nodejs
+(set! *main-cli-fn* #())
+
