@@ -12,6 +12,7 @@
             [com.cemerick/clojurescript.test "0.3.1"]]
 
   :cljsbuild { :builds [
+                        ;; test.html and phantom can work from this build
                         {:id "test"
                          :source-paths   ["src" "test"]
                          :compiler       {:output-to     "compiled/test.js"
@@ -20,33 +21,30 @@
                                           :optimizations :none
                                           :pretty-print  true}}
 
+                        ;; node requires a separate build
                         {:id "test-node"
-                         :source-paths   ["src" "test"]
+                         :source-paths   ["src" "test-node"]
                          :compiler       {:output-to     "compiled/test-node.js"
                                           ;;; source maps can't be used
-                                          :target :nodejs
-                                          ;;; this target requires a main to be defined
+                                          :target :nodejs            ;;; this target required for node, plus a *main* defined in the tests.
                                           :output-dir    "compiled/test-node"
                                           :optimizations :none
                                           :pretty-print  true}}
 
-                        {:id "dev"
+                        #_{:id "dev"
                          :source-paths   ["src"]
                          :compiler       {:output-to     "compiled/dev.js"
                                           :output-dir    "compiled/dev"
                                           :optimizations :none}}
 
-                        {:id "prod"
+                        #_{:id "prod"
                          :source-paths   ["src"]
                          :compiler       {:output-to     "compiled/prod.js"
                                           :output-dir    "compiled/prod"
                                           :optimizations :advanced}}]
 
-               :test-commands {"unit-tests" ["phantomjs" "test/bin/runner-none.js"  "compiled/test" "compiled/test.js"]
-                               "node-tests" ["node" "test/bin/runner-node.js"  "compiled/test-node" "compiled/test-node.js"]}}
-
-  :source-paths ["src" "test"]
-  :test-paths ["spec"]
+               :test-commands {"tests"         ["phantomjs" "test/bin/runner-none.js"       "compiled/test"       "compiled/test.js"]
+                               "node-tests"    ["node"      "test-node/bin/runner-none.js"  "compiled/test-node"  "compiled/test-node.js"]}}
 
   :aliases {"auto-test" ["do" "clean," "cljsbuild" "auto" "test"]}
   )

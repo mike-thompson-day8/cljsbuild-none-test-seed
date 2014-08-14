@@ -14,40 +14,46 @@ The Problem It Solves
 ----------------------
 
 At the time of writing, [cemerick/clojurescript.test]  doesn't work with `:optimizations :none`.
-I tried, it broke, I cursed, I looked into it more wondering what I had done wrong, and pretty quickly
+I tried, it broke, I cursed, I looked into it more wondering what I had done wrong, and quickly
 realised that it could never work as things stood.
 
 I retreated back to using `:optimizations :whitespace` which did work, thankfully, but
 I found my workflow uncomfortable.
-Building a big test.js each time meant my compiles took too long, and this
+
+Building a big `test.js` each time meant my compiles took too long, and this
 made iterative development
-cycles feel slow and clunky. Flow was broken.  No, not good enough!!  I needed the near-instant compile
-time you get by combining `:optimizations :none` and `lein cljsbuild auto <testname>`
+cycles feel slow and clunky. Flow was broken.  It wasn't good enough!!  I needed the near-instant compile
+time that comes from combining `:optimizations :none` and `lein cljsbuild auto <testname>`
 
-So I figured out how to make it happen. And this repo shows how.
+So, I figured out how to make it happen. And this repo shows how.
 
-I've created a `test.html` - a browser-based unittest runner which allows me to
+The key bits of this repo are:
+
+* a browser-based unittest runner `test.html` (found in this root directory). It will aloow you to
 debug unittests using chrome dev-tools.  You can forget the command line
 and just refresh a browser page to see your unittest results.
 
-If the command line is your thing, this repo also shows you how to mix `:optimizations :none`
-with `phantomjs`.
+* a unittest runner script for `phantom.js` - found at `test/bin/runner-none.js`
+
+* a unittest runner script for `nodejs` - found at `test-node/bin/runner-none.js`
 
 
 Why is :none different?
 -----------------------
 
-When the setting for `:optimization` is one of `:simple` `:whitespace` or `:advanced`, cljsbuild will put *all* the javascript into a single, large ".js" file (nominated via `:output-to`).   This can take a while at compile time, but this one-file outcome certainly makes it easy at run time.
+When the setting for `:optimization` is one of `:simple` `:whitespace` or `:advanced`, cljsbuild will put *all* the javascript into a single, large ".js" file (nominated via `:output-to` in your project.clj).
+
+This can take a while at compile time, but this one-file outcome certainly makes it easy at run time.
 
 You just load this one file into the browser (think \<script\>) or nodejs (think command line), and presto, everything is there.
 
 This repo shows how to handle the more difficult run-time situation created by `:optimizations :none` because you don't end up with one large javascript file, but rather **many small javascript files and some dependency information about them**.
 
-Then, at runtime, you have to stitch these files together.
+At runtime, you have to stitch these files together.
 
-For your typical application, this is not difficult.  You use the Google Closure runtime, `goog`, to `require` a single, known root namespace which, in turn, triggers a cascade of other (dependent) namespaces to be required automatically. One call to `goog.require()` and you are done.
+For your typical application, this is not difficult.  You use the Google Closure runtime, `goog`, to `require` a single, known root namespace which, in turn, triggers a cascade of dependent namespaces to be required automatically. One call to `goog.require()` and you are done.
 
-But in the case of unittests, where there's a flat namespace structure (many unknown roots), it is all a bit more of a challenge. Till now.
+But in the case of unittests, where there's a flat namespace structure (many unknown roots, one for each cljs file in your tests directory), and it is all a bit more of a challenge. Till now.
 
 
 
@@ -62,6 +68,9 @@ Then, look at `test/bin/runner-none.js` to see how the same thing is achieved
 in phantomjs. You'll see it is a bit more complicated, and more sparsely
 documented (never a good combination), but armed with what's in `test.html`
 you'll figure it out.
+
+Node is a different beast again, which requires a different test target in the `project.clj`
+and a different runner script in `test-node/bin/runner-none.js`
 
 
 Just Tell Me What To Do!
@@ -98,7 +107,7 @@ Then, load `test.html` into a browser. Bingo! You should see the output from the
 Phantomjs
 --------------------
 
-If the browser is not your thing, or you need to automate deployments etc, you can use phantomjs on the command line.
+If the browser is not your thing, you can use phantomjs on the command line.
 
 
 Imagine for a minute that your project.clj contained this cljsbuild spec involving `:optimizations :none`:
@@ -152,12 +161,30 @@ The technique used here will work just fine.  Here is a [gist] to get you going.
 
 
 
-Do you have a runner for Node?
+What About Node?
 ----------------------
 
-No, sorry I don't need one just yet, so I haven't done it. But if you wanted to try, its going to be like the phantomjs runner, but simpler.
+You'll notice that `test.html` and `phantomjs` shared the one build target in the project.clj.  In effect, they could both use `test.js`.
 
 
+But Node is a different beast:
+
+* You'll see in the `project.clj` that there's a seperate `test-node` build target which includes the line `:target :nodejs`.
+* Also look at the last line in `test-node/core_test.cljs`.
+
+So, to make it happen:
+```
+lein cljsbuild auto test-node
+```
+
+And then run the node tests (you have node installed, right?):
+```
+node  test-node/bin/runner-none.js  compiled/test-node  compiled/test-node.js
+```
+
+As with phantomjs (described above):
+* the first parameter is a custom `runner script` which understands `:optimizations :none`, and
+* the 2nd and 3rd parameters are the cljsbuild values for `:output-dir` and `:output-to` respectively.
 
 
 Copyright and license

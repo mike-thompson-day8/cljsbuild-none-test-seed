@@ -3,6 +3,8 @@
 // I am a "runner" script for use with phantomjs and cemerick/clojurescript.test
 // I handle the case where the cljsbuild setting is ':optimizations :none'
 //
+// See: https://github.com/mike-thompson-day8/cljsbuild-none-test-seed
+//
 var fs       = require('fs');
 var system   = require('system');
 var thisName = system.args[0].split('/').slice(-1);
