@@ -40,26 +40,26 @@ debug unittests using chrome dev-tools. Just refresh the browser page to see you
 Why is :none different?
 -----------------------
 
-When the setting for `:optimization` is one of `:simple` `:whitespace` or `:advanced`, cljsbuild will put *all* the javascript into a single, large ".js" file (nominated via `:output-to` in your project.clj).
+When the setting for `:optimization` is one of `:simple` `:whitespace` or `:advanced`, cljsbuild will put **all** the javascript into a single, large "blah.js" file (nominated via `:output-to` in your project.clj).
 
 This can take a while at compile time, but this one-file outcome certainly makes it easy at run time.
 
-You just load this one file into the browser (think \<script\>) or nodejs (think command line), and presto, everything is there.
+You just load this one file into the browser (think \<script\>) or nodejs (think command line), and, in one fell swoop, everything is there.
 
 This repo shows how to handle the more difficult run-time situation created by `:optimizations :none` because you don't end up with one large javascript file, but rather **many small javascript files and some dependency information about them**.
 
 At runtime, you have to stitch these files together.
 
-For your typical application, this "stitching" is straight forward.  You use the Google Closure runtime, `goog`, to `require` a single, known application entry point (my.namespace.core ?) which will trigger a cascade of dependent namespaces to be required automatically. So, one call to `goog.require("my.namespace.core")` and you are done.
+For your typical application, this "stitching" is straight forward.  You use the Google Closure runtime, `goog`, to `require` a single, known application entry point (my.namespace.core ?) which will, in turn, automatically trigger a cascade of recursive  `goog.requires` for the dependent namespaces.  o, one call to `goog.require("my.namespace.core")` and you are done.
 
-But unittests are tricker. There isn't one root application namespace to require.  Instead, there's a test directory full of '.cljs' files which collectively compile down to a bunch of unrelated, flat namespaces.  There's no one namespace you can require to bring them all in. But we need them all.  So, its all a bit more of a challenge. Untill now.
+But unittests are tricker because there isn't a root application namespace to require.  Instead, there's a test directory full of '.cljs' files which collectively compile down to a bunch of unrelated, flat namespaces.  There's no one namespace you can goog.require to bring them all in. But we need them all.  So, its all a bit more of a challenge. Untill now.
 
 
 
 So How Does The Solution Work?
 ----------------------
 
-Turns out there's a pretty simple hack at the center of this.  Via iterative, brute force it brings in all the unit-test namespaces, and then runs the cemeric test runner. Simple when you know how.
+Turns out there's a pretty simple hack at the center of this.  Via iterative, brute-force it brings in all the unit-test namespaces, and then runs the cemeric test runner. Simple when you know how.
 
 First, read the explanation in `test.html`.
 
