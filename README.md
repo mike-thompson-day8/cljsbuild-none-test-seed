@@ -27,11 +27,10 @@ time that comes from combining `:optimizations :none` and `lein cljsbuild auto <
 
 So, I figured out how to make it happen. And this repo shows how.
 
-The key bits of this repo are:
+This repo tries to demonstrate and document the overall process, but the key parts are:
 
-* a browser-based unittest runner `test.html` (found in this root directory). It will aloow you to
-debug unittests using chrome dev-tools.  You can forget the command line
-and just refresh a browser page to see your unittest results.
+* a unittest runner which runs in the browser.  See `test.html` in this root directory. It allows me to
+debug unittests using chrome dev-tools. Just refresh the browser page to see your unittest run.
 
 * a unittest runner script for `phantom.js` - found at `test/bin/runner-none.js`
 
@@ -51,26 +50,27 @@ This repo shows how to handle the more difficult run-time situation created by `
 
 At runtime, you have to stitch these files together.
 
-For your typical application, this is not difficult.  You use the Google Closure runtime, `goog`, to `require` a single, known root namespace which, in turn, triggers a cascade of dependent namespaces to be required automatically. One call to `goog.require()` and you are done.
+For your typical application, this "stitching" is straight forward.  You use the Google Closure runtime, `goog`, to `require` a single, known application entry point (my.namespace.core ?) which will trigger a cascade of dependent namespaces to be required automatically. So, one call to `goog.require("my.namespace.core")` and you are done.
 
-But in the case of unittests, where there's a flat namespace structure (many unknown roots, one for each cljs file in your tests directory), and it is all a bit more of a challenge. Till now.
+But unittests are tricker. There isn't one root application namespace to require.  Instead, there's a test directory full of '.cljs' files which collectively compile down to a bunch of unrelated, flat namespaces.  There's no one namespace you can require to bring them all in. But we need them all.  So, its all a bit more of a challenge. Untill now.
 
 
 
 So How Does The Solution Work?
 ----------------------
 
-Turns out there's a pretty simple hack at the center of this.
+Turns out there's a pretty simple hack at the center of this.  Via iterative, brute force it brings in all the unit-test namespaces, and then runs the cemeric test runner. Simple when you know how.
 
 First, read the explanation in `test.html`.
 
 Then, look at `test/bin/runner-none.js` to see how the same thing is achieved
-in phantomjs. You'll see it is a bit more complicated, and more sparsely
+in PhantomJS. You'll see it is a bit more complicated, and more sparsely
 documented (never a good combination), but armed with what's in `test.html`
 you'll figure it out.
 
-Node is a different beast again, which requires a different test target in the `project.clj`
-and a different runner script in `test-node/bin/runner-none.js`
+NodeJS is a different beast again, which requires both:
+* a special cljsbuild `:target` in the `project.clj`
+* a different runner script in `test-node/bin/runner-none.js`
 
 
 Just Tell Me What To Do!
@@ -147,21 +147,7 @@ Introduce an error into your tests.  Or perhaps a rogue  `throw`.  See how it sh
 
 
 
-Now Introduce Figwheel
-----------------------
-
-
-If you introduce [figwheel], you won't  even have to go through the arduous process of clicking the refresh button on `test.html`
-
-
-What If I'm Using Specljs?
-----------------------
-
-The technique used here will work just fine.  Here is a [gist] to get you going.
-
-
-
-What About Node?
+What About NodeJS?
 ----------------------
 
 You'll notice that `test.html` and `phantomjs` shared the one build target in the project.clj.  In effect, they could both use `test.js`.
@@ -185,6 +171,21 @@ node  test-node/bin/runner-none.js  compiled/test-node  compiled/test-node.js
 As with phantomjs (described above):
 * the first parameter is a custom `runner script` which understands `:optimizations :none`, and
 * the 2nd and 3rd parameters are the cljsbuild values for `:output-dir` and `:output-to` respectively.
+
+
+Now Introduce Figwheel
+----------------------
+
+
+If you introduce [figwheel], you won't  even have to go through the arduous process of clicking the refresh button on `test.html`
+
+
+What If I'm Using Specljs?
+----------------------
+
+The technique used here will work just fine.  Here is a [gist] to get you going.
+
+
 
 
 Copyright and license
