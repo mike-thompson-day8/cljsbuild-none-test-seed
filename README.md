@@ -22,14 +22,14 @@ I found my workflow uncomfortable.
 
 Building a big `test.js` each time meant my compiles took too long, and this
 made iterative development
-cycles feel slow and clunky. Flow was broken.  It wasn't good enough!!  I needed the near-instant compile
+cycles feel slow and clunky. Flow was broken.  I needed the near-instant compile
 time that comes from combining `:optimizations :none` and `lein cljsbuild auto <testname>`
 
 So, I figured out how to make it happen. And this repo shows how.
 
 The key bits of this repo are:
 
-* a browser-based unittest runner `test.html` (found in this root directory). It will aloow you to
+* a browser-based unittest runner `test.html` (found in this root directory). It will allow you to
 debug unittests using chrome dev-tools.  You can forget the command line
 and just refresh a browser page to see your unittest results.
 
@@ -51,9 +51,9 @@ This repo shows how to handle the more difficult run-time situation created by `
 
 At runtime, you have to stitch these files together.
 
-For your typical application, this is not difficult.  You use the Google Closure runtime, `goog`, to `require` a single, known root namespace which, in turn, triggers a cascade of dependent namespaces to be required automatically. One call to `goog.require()` and you are done.
+For your typical application, this "stitching" is not difficult.  You use the Google Closure runtime, `goog`, to `require` a single, known root namespace and `goog` automatically handles the rest, by triggering a cascade of further `requires` for any upstream namespaces (and then iteratively their upstream requires, etc). One call to `goog.require()` and you are nicely stitched.
 
-But in the case of unittests, where there's a flat namespace structure (many unknown roots, one for each cljs file in your tests directory), and it is all a bit more of a challenge. Till now.
+But in the case of unittests, where there's a flat namespace structure (many unknown roots, one for each cljs file in your tests directory), it is all a bit more of a challenge. Until now.
 
 
 
@@ -62,7 +62,7 @@ So How Does The Solution Work?
 
 Turns out there's a pretty simple hack at the center of this.
 
-First, read the explanation in `test.html`.
+To start, read the long comment in `test.html`.
 
 Then, look at `test/bin/runner-none.js` to see how the same thing is achieved
 in phantomjs. You'll see it is a bit more complicated, and more sparsely
