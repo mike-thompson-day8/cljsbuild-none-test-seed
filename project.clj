@@ -27,6 +27,7 @@
                          :compiler       {:output-to     "compiled/test-node.js"
                                           ;;; source maps can't be used
                                           :target :nodejs            ;;; this target required for node, plus a *main* defined in the tests.
+                                          :hashbang false            ;;; https://github.com/cemerick/clojurescript.test/issues/68#issuecomment-52981151
                                           :output-dir    "compiled/test-node"
                                           :optimizations :none
                                           :pretty-print  true}}
