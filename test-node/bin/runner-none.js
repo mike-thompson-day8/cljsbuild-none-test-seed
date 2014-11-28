@@ -1,6 +1,7 @@
 //-------------------------------------------------------------------------------------------------
 //
-// I am a "runner" script for use with phantomjs and cemerick/clojurescript.test
+// I am a "runner" script for use with nodejs and cemerick/clojurescript.test
+// See:  https://github.com/mike-thompson-day8/cljsbuild-none-test-seed
 // I handle the case where the cljsbuild setting is ':optimizations :none'
 //
 var path = require("path"),
