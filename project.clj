@@ -6,7 +6,7 @@
 
 
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2280"]]
+                 [org.clojure/clojurescript "0.0-2760"]]
 
   :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]
             [com.cemerick/clojurescript.test "0.3.1"]]
@@ -50,5 +50,6 @@
                 :test-commands {"tests"      ["phantomjs" "test/bin/runner-none.js"       "compiled/test"       "compiled/test.js"]
                                "node-tests"  ["node"      "test-node/bin/runner-none.js"  "compiled/test-node"  "compiled/test-node.js"]}}
   
-  :aliases {"auto-test" ["do" "clean," "cljsbuild" "auto" "test"]})
+  :aliases {"auto-test" ["do" "clean," "cljsbuild" "auto" "test"]}
+  :clean-targets ["compiled"])
 

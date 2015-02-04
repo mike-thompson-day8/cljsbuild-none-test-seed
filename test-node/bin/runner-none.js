@@ -124,8 +124,16 @@ goog.nodeGlobalRequire(testFile);
 
 // This loop is where a lot of important work happens
 // It will inject both the unittests and code-to-be-tested into the page
-for(var namespace in goog.dependencies_.nameToPath)
-    goog.require(namespace);    // will trigger CLOSURE_IMPORT_SCRIPT calls which injectJs into page
+//find out what requires cljs.core
+for(var key in goog.dependencies_.requires) {
+    if (goog.dependencies_.requires.hasOwnProperty(key)) {
+        if (goog.dependencies_.requires[key]["cljs.core"]) {
+            //as key is a path find its namespace
+            for (var namespace in goog.dependencies_.pathToNames[key])
+                goog.require(namespace);    // will trigger CLOSURE_IMPORT_SCRIPT calls which injectJs into page
+        }
+    }
+}
 
 failIfCljsTestUndefined(); // check this before trying to call set_print_fn_BANG_
 

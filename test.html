@@ -107,9 +107,17 @@
         // details is not wise. It might change. But I'll take that risk to
         // get the benefits now.
         //
-        for(var namespace in goog.dependencies_.nameToPath)
-            goog.require(namespace);
 
+        //find out what requires cljs.core
+        for(var key in goog.dependencies_.requires) {
+            if (goog.dependencies_.requires.hasOwnProperty(key)) {
+                if (goog.dependencies_.requires[key]["cljs.core"]) {
+                    //as key is a path find its namespace
+                    for (var namespace in goog.dependencies_.pathToNames[key])
+                        goog.require(namespace);
+                }
+            }
+        }
 
         // --------------------------------------------------------------------
         // Output
