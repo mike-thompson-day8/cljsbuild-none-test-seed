@@ -19,7 +19,10 @@
                                           :source-map    "compiled/test.js.map"
                                           :output-dir    "compiled/test"
                                           :optimizations :none
-                                          :pretty-print  true}}
+                                          :pretty-print  true}
+                         ;; if you want auto testing uncomment below
+                         ;; :notify-command ["phantomjs" "test/bin/runner-none.js" "compiled/test" "compiled/test.js"]
+                         }
 
                         ;; node requires a separate build
                         {:id "test-node"
@@ -44,9 +47,8 @@
                                           :output-dir    "compiled/prod"
                                           :optimizations :advanced}}]
 
-               :test-commands {"tests"         ["phantomjs" "test/bin/runner-none.js"       "compiled/test"       "compiled/test.js"]
-                               "node-tests"    ["node"      "test-node/bin/runner-none.js"  "compiled/test-node"  "compiled/test-node.js"]}}
-
-  :aliases {"auto-test" ["do" "clean," "cljsbuild" "auto" "test"]}
-  )
+                :test-commands {"tests"      ["phantomjs" "test/bin/runner-none.js"       "compiled/test"       "compiled/test.js"]
+                               "node-tests"  ["node"      "test-node/bin/runner-none.js"  "compiled/test-node"  "compiled/test-node.js"]}}
+  
+  :aliases {"auto-test" ["do" "clean," "cljsbuild" "auto" "test"]})
 

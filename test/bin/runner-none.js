@@ -150,7 +150,12 @@ for (var i = 3; i < system.args.length; i++) {
         if (!page.injectJs(arg))
           throw new Error("Failed to inject " + arg);
     } else {
-        page.evaluateJavaScript("(function () { " + arg + ";" + " })");
+        // if used in notify command another arguement is passed that is 
+        // the results of the compilation
+        if ((arg.indexOf("Successfully compiled") != 0) &
+            (arg.indexOf("Compiling \"") !=0)) {
+          page.evaluateJavaScript("(function () { " + arg + ";" + " })");
+        }
     }
 }
 
