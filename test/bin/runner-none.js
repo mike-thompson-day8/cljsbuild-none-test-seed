@@ -150,7 +150,12 @@ for (var i = 3; i < system.args.length; i++) {
         if (!page.injectJs(arg))
           throw new Error("Failed to inject " + arg);
     } else {
-        page.evaluateJavaScript("(function () { " + arg + ";" + " })");
+        // if used in notify command another arguement is passed that is 
+        // the results of the compilation
+        if ((arg.indexOf("Successfully compiled") != 0) &
+            (arg.indexOf("Compiling \"") !=0)) {
+          page.evaluateJavaScript("(function () { " + arg + ";" + " })");
+        }
     }
 }
 
@@ -199,9 +204,16 @@ page.injectJs(BASE_JS);
 
 // This loop is where a lot of important work happens
 // It will inject both the unittests and code-to-be-tested into the page
-for(var namespace in goog.dependencies_.nameToPath)
-    goog.require(namespace);    // will trigger CLOSURE_IMPORT_SCRIPT calls which injectJs into page
-
+//find out what requires cljs.core
+for(var key in goog.dependencies_.requires) {
+    if (goog.dependencies_.requires.hasOwnProperty(key)) {
+        if (goog.dependencies_.requires[key]["cljs.core"]) {
+            //as key is a path find its namespace
+            for (var namespace in goog.dependencies_.pathToNames[key])
+                goog.require(namespace); // will trigger CLOSURE_IMPORT_SCRIPT calls which injectJs into page
+        }
+    }
+}
 
 //-- Run the tests  -------------------------------------------------------------------------------
 //
