@@ -3,3 +3,5 @@
 .lein-failures
 .lein-plugins
 .lein-repl-history
+.idea
+*.iml
