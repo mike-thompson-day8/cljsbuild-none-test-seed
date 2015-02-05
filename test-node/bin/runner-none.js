@@ -124,16 +124,21 @@ goog.nodeGlobalRequire(testFile);
 
 // This loop is where a lot of important work happens
 // It will inject both the unittests and code-to-be-tested into the page
-//find out what requires cljs.core
-for(var key in goog.dependencies_.requires) {
-    if (goog.dependencies_.requires.hasOwnProperty(key)) {
-        if (goog.dependencies_.requires[key]["cljs.core"]) {
-            //as key is a path find its namespace
-            for (var namespace in goog.dependencies_.pathToNames[key])
-                goog.require(namespace);    // will trigger CLOSURE_IMPORT_SCRIPT calls which injectJs into page
-        }
+//
+// The loop was originally this simple:
+//     for(var namespace in goog.dependencies_.nameToPath)
+//         goog.require(namespace);
+//
+// But then this happened: http://dev.clojure.org/jira/browse/CLJS-995
+//
+// Now we require in all namespaces which depend on `cljs.core`
+for(var path in goog.dependencies_.requires) {
+    if (goog.dependencies_.requires[path]["cljs.core"]) {              // a cljs file ?
+        for (var namespace in goog.dependencies_.pathToNames[path])    // find the associated namespaces - there should only ever be one
+            goog.require(namespace);          // will trigger CLOSURE_IMPORT_SCRIPT calls which injectJs into page
     }
 }
+
 
 failIfCljsTestUndefined(); // check this before trying to call set_print_fn_BANG_
 
