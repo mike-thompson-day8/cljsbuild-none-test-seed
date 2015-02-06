@@ -27,7 +27,10 @@ time that comes from combining `:optimizations :none` and `lein cljsbuild auto <
 
 So, I figured out how to make it happen. And this repo shows how.
 
-The key bits of this repo are:
+What This Repo Supplies
+-----------------------
+
+The key assets are:
 
 * a browser-based unittest runner `test.html` (found in this root directory). It will allow you to
 debug unittests using chrome dev-tools.  You can forget the command line
